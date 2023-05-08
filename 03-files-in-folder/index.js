@@ -1,23 +1,21 @@
 const fs = require("fs");
 const path = require("path");
-const outputDir = path.join(__dirname, "text.txt");
+const folder = path.join(__dirname, "secret-folder");
 
-async function getOnlyFiles(dirPath, arrFiles) {
-  arrFiles = arrFiles || [];
+fs.readdir(folder, (err, files) => {
+  if (err) throw err;
+  files.forEach((file) => {
+    fs.stat(path.join(folder, file), (err, stats) => {
+      if (err) throw err;
+      if (stats.isFile()) {
+        const name = path.parse(file).name;
+        const exp = path.parse(file).ext.substring(1);
+        const size = (stats.size / 1024).toFixed(3);
+        console.log(`${name} - ${exp} - ${size}kb`);
+        // console.log(`${file}`);
+      }
+    });
+  });
 
-  const files = await fs.readdir(dirPath);
-
-  for (const el of files) {
-    const fileCur = path.join(dirPath, el);
-    const stat = await fs.stat(filePath);
-
-    if (stat.isDirectory()) {
-      continue;
-    } else {
-      arrFiles.push(fileCur);
-    }
-  }
-
-  console.log(arrFiles);
-}
-getOnlyFiles();
+  // console.log(files);
+});
